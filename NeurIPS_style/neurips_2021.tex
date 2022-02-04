@@ -1,0 +1,178 @@
+\documentclass{article}
+
+% if you need to pass options to natbib, use, e.g.:
+%     \PassOptionsToPackage{numbers, compress}{natbib}
+% before loading neurips_2021
+
+% ready for submission
+\usepackage[preprint]{neurips_2021}
+
+% to compile a preprint version, e.g., for submission to arXiv, add add the
+% [preprint] option:
+%     \usepackage[preprint]{neurips_2021}
+
+% to compile a camera-ready version, add the [final] option, e.g.:
+%     \usepackage[final]{neurips_2021}
+
+% to avoid loading the natbib package, add option nonatbib:
+%    \usepackage[nonatbib]{neurips_2021}
+\usepackage{graphicx}
+
+\usepackage[utf8]{inputenc} % allow utf-8 input
+\usepackage[T1]{fontenc}    % use 8-bit T1 fonts
+\usepackage{hyperref}       % hyperlinks
+\usepackage{url}            % simple URL typesetting
+\usepackage{booktabs}       % professional-quality tables
+\usepackage{amsfonts}       % blackboard math symbols
+\usepackage{nicefrac}       % compact symbols for 1/2, etc.
+\usepackage{microtype}      % microtypography
+\usepackage{xcolor}         % colors
+
+\title{Talent Scouting in League of Legends \\ using LCK Challenger League Data}
+
+% The \author macro works with any number of authors. There are two commands
+% used to separate the names and addresses of multiple authors: \And and \AND.
+%
+% Using \And between authors leaves it to LaTeX to determine where to break the
+% lines. Using \AND forces a line break at that point. So, if LaTeX puts 3 of 4
+% authors names on the first line, and the last on the second line, try using
+% \AND instead of \And before the third author name.
+
+\author{%
+  Stefan Fauth\\
+  Matrikelnummer 5706097\\
+  \texttt{stefan.fauth@student.uni-tuebingen.de}
+} 
+  % examples of more authors
+  % \And
+  % Coauthor \\
+  % Affiliation \\
+  % Address \\
+  % \texttt{email} \\
+  % \AND
+  % Coauthor \\
+  % Affiliation \\
+  % Address \\
+  % \texttt{email} \\
+  % \And
+  % Coauthor \\
+  % Affiliation \\
+  % Address \\
+  % \texttt{email} \\
+  % \And
+  % Coauthor \\
+  % Affiliation \\
+  % Address \\
+  % \texttt{email} \\
+
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+I am planning to use the collection of \href{https://oracleselixir.com/stats/players/byTournament}{all Korean Challenger League games (LCK CL) played in 2021} to vizualize player's past performance, based on game metrics. I have to merge four different files (two for playoffs, two for regular seasons). Then, people who participated in more than one season or playoff have to be made comparable to others by averaging or another method. After the annoying bit, I want to create features, indicating a player's performance, as independent as possible, from the team he was a part of to reduce bias induced by teams. Then, I want to use these features to produce descriptive plots, such as scatter plots and, if necessary, unsupervised learning methods, such as t-SNE, to identify outstanding players.
+\end{abstract}
+
+\section{Introduction}
+
+League of Legends (LoL) is a popular Multiplayer Online Battle Arena (MOBA), created by Riot Games, which is played by more than 100 Million people, per month, around the globe \citep{kollar2016past}. In the main game mode, each player gets to choose one of 158 characters (champions) of whom each has different abilities and thus, strengths and weaknesses at different points of the game. Each team has, at each time point, a fixed amount of resources (gold and experience) available. Experience allows for unlocking new abilities or upgrading already unlocked abilities, while gold allows for itemization that improves in and out of combat statistics. Players then fight over non-neutral and neutral objectives to be the first to destroy the enemy nexus, which immediately ends the game. One game consists of two teams, where each team consists of five players, of which each has a different role. \newline Due to the highly competitive nature of the game \citep{kou2016ranking}, players look up to the best players that participate in professional leagues. As of now, corresponding to main servers, professional regions include South Korea (KR), China (CN), Japan (JP), Europe West (EUW), Europe Nordic East (EUNE), North America (NA), Latin America North (LAN), Latin America South (LAS) and Oceania (OCE). The Korean professional league (LCK), as well as the Korean, public server are widely regarded as being the the highest-competitive environment for players.  Consequently, non-Korean teams have, however due to cultural and language barriers with varying success, imported Korean players into their rosters. In order to prevent teams from an excessive practice of importing and to support local talents, Riot Games has imposed limitations on importing. Even though this rule still holds, non-Korean teams remain interested in talent from the Korean server: for example, with regard to the start of the competitive year 2022, the North American team Cloud 9 ended up signing two Korean players. One of these players did not play in Korea's highest professional league (LCK), but in the second highest professional league (LCK Challenger Series) that mainly consists of experienced, former first-class pros and new talent. The present study seeks to suggest criteria that can be utilized to measure the future, potential, latent skill level of a player. As in other sports, this level is driven by a row of variables: psychological, sociological factors, maturation, chance, an athlete's environment, game intelligence and tactical understanding \citep{williams2020talent}. The main difference to regular sports lies in the fact that physical features of an athlete are replaced by cognitive and fine-motor ability (mechanics). Due to the lack of data, researchers are forced to measure the joint, combined statement of these factors , i.e the skill level, by analyzing in-game outcomes. Nevertheless, due to the small amount of research done in this field, little is known about generally accepted key performance indicators (KPI). This article gives a short overview of KPIs whose theoretical foundation oversimplifies the nature of the game by outlining their weaknesses and suggests more objective alternatives.
+
+
+\section{Main Hypotheses}
+\subsection{Team bias, opportunity cost and sample size question the validity of common metrics}
+First, the reader will be provided with a small breakdown of problematic KPIs: 
+In general, to assess the validity of an indicator, it has to be shown that it is robust against the influence of the team (team bias)
+
+ feature major weaknesses caused by the following issues: 
+ 
+ 
+ 
+As a consequence of a potential team bias, raw, absolute indicators, such as a player's winrate, CS/m (Creep Score per minute) or average KDA ($\frac{kills + assists}{deaths}$) cannot be considered useful: like in soccer, having strong teammates automatically lets you win games, even if you perform poorly. Added to that, having the top scorer on your team, also increases the likelihood of scoring assists or last-hitting goals, i.e. kills. It also grants you more access to neutral resources, distorting the CS/m. Furthermore, outcomes such as KDA and CS/m also greatly depend on matchups and general team compositions. In order to prioritize other position's matchups, the coach might draft a losing top lane champion, which could result in a low KDA and CS/m score for the top laner, which can not be attributed to a player's capabilities. \newline
+Except for the aforementioned team bias, average CS/m, as well as average gold per minute (GP/m) are also problematic in terms of opportunity cost. The nature of the limited availability of resources suggests that if one player has a huge amount of resources (XP and gold), the others can not have as much. Yet, having a lot of resources does not exclusively mean that a players helps in winning the game.  This is a matter of efficiency: certain players manage to have a comparetively high impact in the game with less resources required, indicating these players can be considered advantageous. Moreover, the general notion of opportunity cost suggests that committing time to accumulate resources means that a player can not do other things at the same time: in particular, with regard to claiming neutral objectives, sometimes, a team might benefit more from a player grouping with the rest of the team or securing vision than having the player collecting resources. 
+\newline
+Finally, as in all statistics, the analyst should question the validity of estimates, simply due to the difference in sample size. Certain players have played more games than other players, indicating higher certainty in their estimates as a true measure of their skill. If one player just played one game and performed greatly, this does not mean that he should be acknowledged as being the best. Please note that the goal remains to identify players that, consistently, outperform others. 
+
+\subsection{Alternatives}
+After illustrating several pitfalls of popular metrics, now, criteria will be presented that are designed to address these problems. Subsequently, the reader will be provided with explanations, outlining reasons why they are able to address them. \newline The first two metrics DPM per gold ($DPM^*$) and Net KP per gold ($KP^*$) cover gold efficiency:
+\begin{equation}
+DPM^* = \frac{dmg \%}{gold \%} \indent \indent ,
+\end{equation}
+\begin{equation}
+KP^* =  \frac{KA \% - D \%}{gold \%} \indent \indent ,
+\end{equation}
+
+
+in which: \newline
+$dmg\%$: average share of team's total damage to champions in $\%$ \newline
+$gold\%$: average share of team's total gold in $\%$ \newline
+$KA\%$: average share of team's kills in $\%$, where a player earned a kill or an assist \newline
+$D\%$: average share of team's total deaths in $\%$
+\newline \newline
+The idea behind these metrics is that we want to model a player's gold efficiency by his damage per percentage of team gold and by his number of clean (net) kill participations. By using fractions of team's stats, the team bias gets removed, at least to some extent. Even if the team is losing, a well performing player will still have a high fractions of the team's damage and net kills.  \newline
+The aforementioned metrics account for the team bias by expressing a player's performance by expressing his performance as a fraction of the whole team's. Another strategy to cope with the team bias could be to consider metrics that do not depend as much on the team, i.e. metrics that describe the isolated comparison of a player and his counterpart in the enemy team. In the early game (the first 10 minutes of the game), this is mostly the case. Early ganks and skirmishes tend to happen. Let's assume that independently of the team, these events have the same to  happen probability for every team, which means that we can disregard it. Added to that, beside the first dragon, no neutral objectives, except for jungle camps, are available. Therefore, it can be concluded that accumulating resources can not be associated with high opportunity cost. It suffices to look at the gold and the xp difference, as the cs is just one cause of these differences. Furthermore, the gold and xp difference also incorporate early kills and assists. Yet, in pro play, they could be greatly influenced by which player actually gets to pick his champ later than his opponent. Thus, let's normalize the average gold and xp differences by the fraction of games, where a player had a chance to pick his champion after his opponent, indicating a potential counterpick. This yields Net Gold difference ($GD^*$) and Net XP difference pre minute 10($XPD^*$):
+\begin{equation}
+GD^*  =  \frac{gdif}{counter \%} ,
+\end{equation}
+\begin{equation}
+XPD^* =  \frac{xpdif}{counter \%} ,
+\end{equation}
+
+in which: \newline
+$gdif$: average gold difference at minute 10 \newline
+$xpdif\%$: average difference in experience at minute 10 $\%$ \newline
+$counter\%$: fraction of games in which a player picked after his direct opponent  
+\section{Methods}
+\subsection{Data collection and aggregation}
+The data source,
+\href{https://oracleselixir.com/stats/players/byTournament}{Oracle's Elixir}, provided for each  stage of the competitive year 2021 of the LCK Challenger League (both regular splits and playoffs) one table, including all players participating in the respective stage. For each player, general information, such as team, position, number of games played, and winrate was available. Added to that, the data included specific KPIs summarizing a player's average, total game performance, e.g. KDA. Some metrics also captured a player's average outcomes until minute 10. \newline
+As the main objective of the analysis was to identify players, who consistently perform better than their role-specific competitors, the data for average outcomes in one stage as averaged over all stages, a player took part in. Lastly, players who played less than ten games were removed from the dataset, as their KPIs are not credible, due to low sample size. 
+\subsection{Statistical analysis}
+Assuming a Beta prior, Bayesian inference on team's winrates have shown that the winrate's posterior distributions overlap greatly, indicating that creating groups of relatively better and worse teams can be discarded. 
+
+
+Fig. 1 provides a role-wise comparison of the metrics DPM per gold and Net KP per gold, while Fig. 2 illustrates Net Gold difference and Net XP difference pre minute 10 for each player.
+
+\begin{figure}
+\includegraphics[scale=0.5]{newplot.png}
+\end{figure}
+%\includegraphics[scale=0.35]{newplot.png}
+
+Let us know compute a rank for each metric and average over them to compute the top performers:
+
+
+For top lane, Chasy seems to be the outstanding player. 
+
+\section{Discussion}
+Resource diff of bot lane extremely biased by lane partner's behavior (questionable to use this). one should maybe rather look at the joint difference of a botlane
+
+
+\section{Conclusion}
+
+
+
+
+
+
+
+
+Schlechte KP, da scaling pick (liegt nicht am Spieler).Aber im durchschnitt ist meta für alle gleich, was ähnliche picjks für alle teams suggeriert
+
+Analysts should rather focus on 
+
+focus on past competitive performance as in game measure
+ that measure a player's performance. 
+group by roles
+
+
+INFERENCE TO COMPARE TEAMS?!
+
+ Data is publicly available from Riot's API and can be accessed. Due to the inconvenient data structure that mainly consists of dictionaries, a lot of data wrangling is necessary until actual,  questions can be answered. Therefore, this project opted into data from the \href{https://oracleselixir.com/}{Oracle's Elixir database} that provides data from the Riot API in a standard, tidied format (rows are players, while columns are features of the players). 
+no iid samples
+
+
+\bibliography{citations}
+
+
+
+\end{document}
