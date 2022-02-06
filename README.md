@@ -1,1 +1,2 @@
 # LCKCL-2021-Talent-Identification
+This repo documents my project about Talent Identification using publicly available data from https://oracleselixir.com/stats/players/byTournament. The folder src contains a Jupyter notebook in which I describe data aggregation and creation of the paper's plots. It also contains a section about Bayesian inference on winrates of several teams. There, it can be shown that, assuming a Beta(2,2) prior, that the PDFs of team's posteriors are quite similar, providing evidence for the comparability of players, independently of their team.
